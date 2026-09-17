@@ -1,0 +1,46 @@
+<?php /* Session and access control are handled by api.php. */ ?>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>2TL — Quản trị viên</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f6fa;color:#172033}.hidden{display:none!important}
+.layout{min-height:100vh;display:flex}.side{width:245px;background:#0b0d12;color:#fff;padding:22px 15px;position:fixed;inset:0 auto 0 0;z-index:10}.logo{font-weight:800;letter-spacing:1.5px;font-size:18px;padding:4px 12px 26px}.logo span{color:#6ea8ff}.nav{display:flex;flex-direction:column;gap:7px}.nav button{border:0;background:transparent;color:#9ca3af;text-align:left;padding:12px 14px;border-radius:10px;font:600 13px Inter;cursor:pointer}.nav button i{width:24px}.nav button:hover,.nav button.active{background:#1b1f28;color:#fff}.logout{position:absolute;left:15px;right:15px;bottom:20px}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1600px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.top h1{margin:5px 0 0;font-size:28px}.muted{color:#7b8495;font-size:12px}.admin-user{display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e7efff;color:#2864d7;font-weight:800}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px}.stat,.panel{background:#fff;border:1px solid #e7eaf0;border-radius:16px;box-shadow:0 8px 30px rgba(15,23,42,.04)}.stat{padding:19px}.stat .ico{width:42px;height:42px;border-radius:11px;background:#edf3ff;color:#2864d7;display:grid;place-items:center;margin-bottom:12px}.stat strong{font-size:25px;display:block}.stat span{display:block;color:#7b8495;font-size:12px;margin-top:4px}.panel{padding:20px;margin-bottom:20px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:16px}.panel-head h2{font-size:16px;margin:0}.actions{display:flex;gap:8px;align-items:center}.btn{border:0;border-radius:9px;padding:10px 13px;font:700 12px Inter;cursor:pointer}.btn.primary{background:#2864d7;color:#fff}.btn.light{background:#eef1f5;color:#374151}.btn.danger{background:#fee2e2;color:#b91c1c}.search{border:1px solid #dce1e8;border-radius:9px;padding:10px 12px;min-width:220px;outline:none}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{font-size:10px;text-transform:uppercase;color:#8992a2;letter-spacing:.5px;text-align:left;padding:11px 10px;border-bottom:1px solid #edf0f4}.table td{font-size:12px;padding:12px 10px;border-bottom:1px solid #f0f2f5;vertical-align:middle}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:700}.badge.ok{background:#dcfce7;color:#15803d}.badge.lock{background:#fee2e2;color:#b91c1c}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.field label{font-size:11px;font-weight:700}.field input{width:100%;border:1px solid #dce1e8;border-radius:9px;padding:11px;outline:none;font:400 13px Inter;background:#fff}.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:20px;z-index:50}.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{font-size:18px;margin:0}
+.notice{background:#edf3ff;border:1px solid #d7e5ff;color:#2454a6;padding:13px 15px;border-radius:12px;font-size:12px;line-height:1.6;margin-bottom:20px}
+@media(max-width:760px){.side{width:70px}.side .logo{font-size:0;padding-left:10px}.side .logo:after{content:'SZ';font-size:17px}.nav button{font-size:0;text-align:center}.nav button i{width:auto;font-size:16px}.logout{font-size:0}.logout i{font-size:15px}.main{margin-left:70px;width:calc(100% - 70px);padding:17px}.top h1{font-size:22px}.cards{grid-template-columns:1fr}.panel-head{align-items:flex-start;flex-direction:column}.actions{width:100%}.search{width:100%;min-width:0}}
+</style>
+</head>
+<body>
+<div id="login" class="modal"><div class="modal-box" style="max-width:410px"><div class="logo" style="color:#111;padding:0 0 18px">2 <span>TL</span></div><h2 style="margin:0 0 5px">Màn hình quản trị viên</h2><p class="muted" style="margin-bottom:20px">Chỉ dành cho quản trị viên cấp cao.</p><form id="loginForm"><div class="field"><label>Tài khoản</label><input id="username" autocomplete="username" required></div><div class="field"><label>Mật khẩu</label><input id="password" type="password" autocomplete="current-password" required></div><button class="btn primary" style="width:100%;padding:12px">Đăng nhập</button></form></div></div>
+<div id="app" class="layout hidden">
+<aside class="side"><div class="logo">2 <span>TL</span></div><nav class="nav"><a href="admin.php" style="color:#fff;padding:12px">Quản lý cửa hàng</a><button data-section="customers"><i class="fa-solid fa-users"></i> Khách hàng</button></nav><button id="logout" class="btn light logout"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button></aside>
+<main class="main">
+<div class="top"><div><div class="muted">2TL / QUẢN TRỊ VIÊN</div><h1 id="pageTitle">Khách hàng</h1></div><div class="admin-user"><div class="avatar">A</div><div><b id="adminName">Admin</b><div class="muted">Quản trị viên cấp cao</div></div></div></div>
+<div class="notice">Quản trị viên quản lý khách hàng và được sử dụng toàn bộ chức năng tại <a href="admin.php">Quản lý cửa hàng</a>.</div>
+
+<section id="customers" class="section"><div class="cards"><div class="stat"><div class="ico"><i class="fa-solid fa-users"></i></div><strong id="customerCount">0</strong><span>Tổng khách hàng</span></div><div class="stat"><div class="ico"><i class="fa-solid fa-user-check"></i></div><strong id="customerActive">0</strong><span>Khách hàng đang hoạt động</span></div></div><div class="panel"><div class="panel-head"><h2>Quản lý tài khoản khách hàng</h2><div class="actions"><input id="customerSearch" class="search" placeholder="Tìm tên hoặc email..."><button class="btn light" onclick="loadCustomers()">Làm mới</button></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Khách hàng</th><th>Email</th><th>SĐT</th><th>Đơn</th><th>Đơn hoàn thành</th><th>Trạng thái</th><th></th></tr></thead><tbody id="customerTable"></tbody></table></div></div></section>
+</main></div>
+<script src="api-client.js"></script>
+<script>
+const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));const money=n=>Number(n||0).toLocaleString('vi-VN')+'₫';
+async function api(action,opts={}){const r=await szFetch('api.php?action='+action,{headers:{'Content-Type':'application/json'},...opts});const d=await r.json();if(!r.ok||d.success===false)throw new Error(d.message||'Có lỗi');return d}
+async function check(){try{const d=await api('me');if(d.loggedIn){if(d.role!=='admin'){location.href='admin.php';return;}$('login').classList.add('hidden');$('app').classList.remove('hidden');$('adminName').textContent=d.name;loadCustomers();}}catch(e){alert(e.message)}}
+$('loginForm').onsubmit=async e=>{e.preventDefault();try{const d=await api('login',{method:'POST',body:JSON.stringify({username:$('username').value,password:$('password').value})});if(d.role!=='admin')throw new Error('Tài khoản này là người quản lý, hãy đăng nhập tại admin.php.');location.reload()}catch(e){alert(e.message)}};
+$('logout').onclick=async()=>{await api('logout');location.reload()};
+let customerCache=[];
+async function loadCustomers(){try{const d=await api('customers');customerCache=d.customers;$('customerCount').textContent=customerCache.length;$('customerActive').textContent=customerCache.filter(x=>Number(x.status)===1).length;renderCustomers(customerCache)}catch(e){alert(e.message)}}
+function renderCustomers(rows){$('customerTable').innerHTML=rows.map(c=>`<tr><td><b>${esc(c.full_name)}</b></td><td>${esc(c.email)}</td><td>${esc(c.phone||'—')}</td><td>${c.orders}</td><td>${money(c.spent)}</td><td>${Number(c.status)===1?'<span class="badge ok">Hoạt động</span>':'<span class="badge lock">Đã khóa</span>'}</td><td><button class="btn light" onclick="toggleCustomer(${c.id})">${Number(c.status)===1?'Khóa':'Mở khóa'}</button></td></tr>`).join('')||'<tr><td colspan="7">Chưa có khách hàng.</td></tr>'}
+$('customerSearch').oninput=e=>{const q=e.target.value.toLowerCase();renderCustomers(customerCache.filter(c=>c.full_name.toLowerCase().includes(q)||c.email.toLowerCase().includes(q)))};
+async function toggleCustomer(id){try{await api('toggle_customer&id='+id);loadCustomers()}catch(e){alert(e.message)}}
+document.querySelector('[data-section=customers]').onclick=loadCustomers;
+check();
+</script>
+</body></html>
